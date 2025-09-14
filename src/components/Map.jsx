@@ -1,4 +1,5 @@
 import { useGLTF } from "@react-three/drei";
+import { RigidBody } from "@react-three/rapier";
 import React, { useEffect } from "react";
 
 export const MapModel = () => {
@@ -13,7 +14,13 @@ export const MapModel = () => {
     });
   });
 
-  return <primitive object={map.scene} />;
+  return(
+    <RigidBody colliders="trimesh" type="fixed"> 
+      <primitive object={map.scene}/>;
+
+    </RigidBody>
+  ) 
+    
 };
 
 useGLTF.preload("models/map.glb");
