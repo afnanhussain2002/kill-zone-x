@@ -23,7 +23,11 @@ export const Experience = () => {
       state.setState("health", 100);
       state.setState("deaths", 0);
       state.setState("kills", 0);
+      state.onQuit(() => {
+        setPlayers((players) => players.filter((p) => p.state !== state));
+      })
     })
+
   }, []);
   return (
     <>
