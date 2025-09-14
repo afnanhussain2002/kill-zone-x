@@ -1,7 +1,7 @@
 import { useGLTF } from "@react-three/drei";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-const Map = () => {
+export const MapModel = () => {
   const map = useGLTF("models/map.glb");
 
   useEffect(() => {
@@ -12,8 +12,8 @@ const Map = () => {
       }
     });
   });
+
   return <primitive object={map.scene} />;
 };
 
-export default Map;
 useGLTF.preload("models/map.glb");
