@@ -31,7 +31,22 @@ const Bullet = ({ player, angle, position, onHit }) => {
         position-y={WEAPON_OFFSET.y}
         position-z={WEAPON_OFFSET.z}
       >
-        <RigidBody ref={bulletRigidBody}>
+        <RigidBody
+          ref={bulletRigidBody}
+          gravityScale={0}
+          onIntersectionEnter={(e) => {
+            if (isHost() && e.other.bulletRigidBody.userData?.type !== "bullet") {
+              bulletRigidBody.current.setEnabled(false);
+              onHit(vec3(bulletRigidBody.current.translation()));
+            }
+          }}
+          sensor
+          userData={{
+            type: "bullet",
+            player,
+            damage: 10,
+          }}
+        >
           <mesh position-z={0.25} material={bulletMaterial} castShadow>
             <boxGeometry args={[0.05, 0.05, 0.5]} />
           </mesh>
