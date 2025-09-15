@@ -22,6 +22,9 @@ const Bullet = ({ player, angle, position, onHit }) => {
       z: Math.cos(angle) * BULLET_SPEED,
     };
     bulletRigidBody.current.setLinvel(velocity, true);
+
+    const audio = new Audio("/audio/rifle.mp3");
+    audio.play();
   }, []);
 
   return (
