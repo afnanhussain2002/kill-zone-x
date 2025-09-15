@@ -3,17 +3,20 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { MapModel } from "./Map";
 import { insertCoin, Joystick, myPlayer, onPlayerJoin } from "playroomkit";
 import CharacterController from "./CharacterController";
+import Bullet from "./Bullet";
 
 export const Experience = () => {
   const [players, setPlayers] = useState([]);
-  const [bullets, setBullets] = useState([])
+  const [bullets, setBullets] = useState([]);
 
-  const onFire = (bullet) =>{
-    setBullets((bullets) => [...bullets, bullet]) 
-  }
-  const onHit = (bulletId) =>{
-   setBullets((bullets)=> bullets.filter((b) => b.id !== bulletId ))
-  }
+  const onFire = (bullet) => {
+    console.log(bullet);
+    setBullets((bullets) => [...bullets, bullet]);
+  };
+  const onHit = (bulletId) => {
+    console.log("onHit", bulletId);
+    setBullets((bullets) => bullets.filter((b) => b.id !== bulletId));
+  };
   const start = async () => {
     await insertCoin();
   };
@@ -59,15 +62,13 @@ export const Experience = () => {
           position-x={idx * 2}
           state={state}
           joystick={joystick}
-          userPlayer={state.id === myPlayer().id}
+          userPlayer={state.id === myPlayer()?.id}
           onFire={onFire}
         />
       ))}
-      {
-        bullets.map((bullet) =>{
-          <Bullet key={bullet.id} {...bullet} onHit={() => onHit(bullet.id)}/>
-        })
-      }
+      {bullets.map((bullet) => (
+        <Bullet key={bullet.id} {...bullet} onHit={() => onHit(bullet.id)} />
+      ))}
       <Environment preset="sunset" />
     </>
   );

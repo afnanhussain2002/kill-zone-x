@@ -6,7 +6,13 @@ import { isHost } from "playroomkit";
 import { CameraControls } from "@react-three/drei";
 
 const MOVEMENT_SPEED = 200;
-const FIRE_RATE = 300;
+const FIRE_RATE = 380;
+
+export const WEAPON_OFFSET ={
+  x: -0.2,
+  y: 1.4,
+  z: 0.8
+}
 const CharacterController = ({ state, joystick, userPlayer, onFire, ...props }) => {
   const groupChar = useRef();
   const character = useRef();
@@ -16,6 +22,7 @@ const CharacterController = ({ state, joystick, userPlayer, onFire, ...props }) 
   const [animation, setAnimation] = useState("Idle");
 
   useFrame((_, delta) => {
+    if (!charRigidBody.current) return; // ⬅️ prevent crash until ready
     if (controls.current) {
       const cameraDistanceY = window.innerWidth < 1024 ? 16 : 20;
       const cameraDistanceZ = window.innerWidth < 1024 ? 12 : 16;
@@ -57,22 +64,23 @@ const CharacterController = ({ state, joystick, userPlayer, onFire, ...props }) 
 
     // check if the fire button pressed
 
-    if (joystick.isPressed("fire")) {
-      setAnimation("Idle_Shoot")
-      if (isHost()) {
-        if (Date.now() - lastShoot.current > FIRE_RATE) {
-          lastShoot.current = Date.now()
-          
-          const newBullet = {
-            id: state.id + "-" + +new Date(),
-            position:vec3(charRigidBody.current.translation()),
-            angle,
-            player: state.id
-          }
-          onFire(newBullet)
-        }
-      }
+    if (joystick.isPressed("fire") && charRigidBody.current) {
+  setAnimation("Idle_Shoot")
+  if (isHost()) {
+    if (Date.now() - lastShoot.current > FIRE_RATE) {
+      lastShoot.current = Date.now()
+      
+      const newBullet = {
+        id: state.id + "-" + +new Date(),
+        position: vec3(charRigidBody.current.translation()), // safe now
+        angle,
+        player: state.id
+      };
+      console.log("newBullet===", newBullet);
+      onFire(newBullet);
     }
+  }
+}
   });
   return (
     <group ref={groupChar} {...props}>
@@ -88,6 +96,7 @@ const CharacterController = ({ state, joystick, userPlayer, onFire, ...props }) 
           <CharacterSoldier
             color={state.state.profile?.color}
             animation={animation}
+            
           />
         </group>
 
